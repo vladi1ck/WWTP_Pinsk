@@ -1,6 +1,5 @@
 from django.contrib.auth.admin import UserAdmin
-from .models import User, BBO, Parameter, LabValue, ProjValue, ParameterFromAnalogSensorForBBO, \
-    ManagementConcentrationFlowForBBO, CommandForBBO, Notification
+from .models import User, BBO,  LabValue, ProjValue
 from django.contrib import admin
 
 
@@ -30,24 +29,24 @@ class MyProjAdmin(admin.ModelAdmin):
 
 @admin.register(LabValue)
 class MyLabAdmin(admin.ModelAdmin):
-    list_display = ('bbo_id', 'modified_time', 'modified_by')
-
-
-@admin.register(ParameterFromAnalogSensorForBBO)
-class MyParameterFromAnalogSensorForBBOAdmin(admin.ModelAdmin):
-    list_display = ('name', 'bbo_id', 'time')
-
-@admin.register(ManagementConcentrationFlowForBBO)
-class MyManagementAirFlowForBBOAdmin(admin.ModelAdmin):
-    list_display = ('name', 'bbo_id','time')
-
-@admin.register(CommandForBBO)
-class MyCommandForBBOAdmin(admin.ModelAdmin):
-    list_display = ('name', 'command','time', 'bbo_id',)
-
-@admin.register(Notification)
-class MyNotificationAdmin(admin.ModelAdmin):
-    list_display = ('created_date', 'status_code', 'bbo_id', 'message')
-
+    list_display = ('bbo_id', 'modified_time', 'modified_by', 'datetime')
+#
+#
+# @admin.register(ParameterFromAnalogSensorForBBO)
+# class MyParameterFromAnalogSensorForBBOAdmin(admin.ModelAdmin):
+#     list_display = ('name', 'bbo_id', 'time')
+#
+# @admin.register(ManagementConcentrationFlowForBBO)
+# class MyManagementAirFlowForBBOAdmin(admin.ModelAdmin):
+#     list_display = ('name', 'bbo_id','time')
+#
+# @admin.register(CommandForBBO)
+# class MyCommandForBBOAdmin(admin.ModelAdmin):
+#     list_display = ('name', 'command','time', 'bbo_id',)
+#
+# @admin.register(Notification)
+# class MyNotificationAdmin(admin.ModelAdmin):
+#     list_display = ('created_date', 'status_code', 'bbo_id', 'message')
+#
 admin.site.register(User, MyUserAdmin)
-admin.site.register(Parameter)
+# admin.site.register(Parameter)

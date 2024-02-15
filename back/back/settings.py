@@ -105,7 +105,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'USER': 'postgres',
         'PASSWORD': '[eqgbplfcrjdjhjlf228',
-        'NAME': 'wwt_new',
+        'NAME': 'wwtp_pinsk',
         'HOST': '127.0.0.1',
         'PORT': '5432',
     }

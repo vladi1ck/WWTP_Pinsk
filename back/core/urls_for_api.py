@@ -12,8 +12,8 @@ from .logic_for_bbo import (
     GetProjValueView,
     GetAllBBOProjValueView,
     GetAllBBOLabValueView,
-    ParameterFromAnalogSensorForBBOView, AllParameterFromAnalogSensorForBBO1View,
-    AirManagerView, CommandForBBOView, stat_detail
+    # ParameterFromAnalogSensorForBBOView, AllParameterFromAnalogSensorForBBO1View,
+    # AirManagerView, CommandForBBOView, stat_detail
 )
 
 schema_view = get_swagger_view(title='Pastebin API')
@@ -25,12 +25,12 @@ urlpatterns = [
     path('post_proj_value', PostProjValueView.as_view()),
     path('get_all_proj_value', GetAllBBOProjValueView.as_view()),
     path('get_all_lab_value', GetAllBBOLabValueView.as_view()),
-    path('post_analog_parameter', ParameterFromAnalogSensorForBBOView.as_view()),
-    path('get_manager_air_flow', AirManagerView.as_view()),
-    path('post_manager_air_flow', AirManagerView.as_view()),
-    path('post_command', CommandForBBOView.as_view()),
+    # path('post_analog_parameter', ParameterFromAnalogSensorForBBOView.as_view()),
+    # path('get_manager_air_flow', AirManagerView.as_view()),
+    # path('post_manager_air_flow', AirManagerView.as_view()),
+    # path('post_command', CommandForBBOView.as_view()),
     path('swagger', schema_view),
-    re_path(r'stat', logic_for_bbo.stat_detail),
+    # re_path(r'stat', logic_for_bbo.stat_detail),
     # re_path(r'stat/(?P<bbo_id>.+)/(?P<name>.+)/(?P<first_date>.+)/(?P<last_date>.+)$', logic_for_bbo.stat_detail),
 
 ]

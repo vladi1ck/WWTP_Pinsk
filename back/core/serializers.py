@@ -5,8 +5,7 @@ from rest_framework.relations import StringRelatedField, PrimaryKeyRelatedField
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 
-from .models import Parameter, User, LabValue, ProjValue, ParameterFromAnalogSensorForBBO, BBO, \
-    ManagementConcentrationFlowForBBO, CommandForBBO, Notification
+from .models import  User, LabValue, ProjValue, BBO
 from rest_framework.validators import UniqueTogetherValidator
 from django.utils import dateformat
 from django.conf import settings
@@ -29,16 +28,16 @@ from datetime import datetime
 #         instance.save()
 #         return instance
 
-class ParameterSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Parameter
-        fields = '__all__'
-
-
-class ParameterSerializerForSave(serializers.ModelSerializer):
-    class Meta:
-        model = Parameter
-        fields = ('name', 'value')
+# class ParameterSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Parameter
+#         fields = '__all__'
+#
+#
+# class ParameterSerializerForSave(serializers.ModelSerializer):
+#     class Meta:
+#         model = Parameter
+#         fields = ('name', 'value')
 
 
 class AuthUserRegistrationSerializer(serializers.ModelSerializer):
@@ -131,35 +130,35 @@ class projValueSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class ParameterFromAnalogSensorForBBOSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ParameterFromAnalogSensorForBBO
-        exclude = ('id',)
+# class ParameterFromAnalogSensorForBBOSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = ParameterFromAnalogSensorForBBO
+#         exclude = ('id',)
 
 
 class BBOSerializer(serializers.ModelSerializer):
-    val = ParameterFromAnalogSensorForBBOSerializer(many=True, read_only=True)
+    # val = ParameterFromAnalogSensorForBBOSerializer(many=True, read_only=True)
 
     class Meta:
         model = BBO
         exclude = ('modified_by',)
 
-
-class ManagementConcentrationFlowForBBOSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ManagementConcentrationFlowForBBO
-        exclude = ('id',)
-
-
-class CommandForBBOSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CommandForBBO
-        exclude = ('id',)
-
-
-class NotificationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Notification
-        exclude = ('id',)
+#
+# class ManagementConcentrationFlowForBBOSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = ManagementConcentrationFlowForBBO
+#         exclude = ('id',)
+#
+#
+# class CommandForBBOSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = CommandForBBO
+#         exclude = ('id',)
+#
+#
+# class NotificationSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Notification
+#         exclude = ('id',)
 
 

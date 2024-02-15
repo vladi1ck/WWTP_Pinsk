@@ -15,6 +15,7 @@ from channels.auth import AuthMiddlewareStack
 from core import routing
 
 
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'back.settings')
 
 application = ProtocolTypeRouter({

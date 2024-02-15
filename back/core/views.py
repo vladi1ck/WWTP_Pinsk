@@ -18,9 +18,9 @@ from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 
-from .serializers import (ParameterSerializer, ParameterSerializerForSave,
+from .serializers import (
                           AuthUserLoginSerializer, AuthUserRegistrationSerializer, UserListSerializer)
-from .models import Parameter, User
+from .models import  User
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -40,20 +40,20 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
-
-class ParameterView(viewsets.ModelViewSet):
-    serializer_class = ParameterSerializer
-    queryset = Parameter.objects.all()
-
-
-@api_view(['POST'])
-def upldParameter(request):
-    data = JSONParser().parse(request)
-    serializer = ParameterSerializerForSave(data=data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=201)
-    return Response(serializer.errors, status=400)
+#
+# class ParameterView(viewsets.ModelViewSet):
+#     serializer_class = ParameterSerializer
+#     queryset = Parameter.objects.all()
+#
+#
+# @api_view(['POST'])
+# def upldParameter(request):
+#     data = JSONParser().parse(request)
+#     serializer = ParameterSerializerForSave(data=data)
+#     if serializer.is_valid():
+#         serializer.save()
+#         return Response(serializer.data, status=201)
+#     return Response(serializer.errors, status=400)
 
 
 class AuthUserLoginView(GenericAPIView):

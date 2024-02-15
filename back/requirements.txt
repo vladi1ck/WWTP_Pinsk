@@ -1,4 +1,4 @@
-asgiref==3.4.1
+asgiref==3.6.0
 attrs==21.4.0
 autobahn==21.11.1
 Automat==20.2.0
@@ -7,12 +7,14 @@ djangorestframework==3.14.0
 psycopg2==2.9.9
 django-cors-headers==4.3.0
 
-rest_framework_swagger
+async-signals==0.1.7
+drf-yasg==1.21.7
+django-rest-swagger
 channels==3.0.4
 constantly==15.1.0
 cryptography==36.0.1
 daphne==3.0.2
-Django==4.0.1
+Django==4.2.1
 hyperlink==21.0.0
 idna==3.3
 incremental==21.3.0

@@ -10,7 +10,7 @@ from .views import (
 )
 
 urlpatterns = [
-    path('upldParameter', views.upldParameter),
+    # path('upldParameter', views.upldParameter),
     path('token/obtain/', MyTokenObtainPairView.as_view(), name='token_create'),
     path('token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
     path('register', AuthUserRegistrationView.as_view(), name='register'),

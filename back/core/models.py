@@ -55,12 +55,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.username
 
 
-class Parameter(models.Model):
-    name = models.CharField(max_length=255)
-    value = models.FloatField(max_length=255)
-    time = models.DateTimeField(auto_now_add=True)
-
-
 class BBO(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
@@ -72,33 +66,37 @@ class BBO(models.Model):
         return f'{self.name}'
 
 
-class WorkMode(models.Model):
-    mode = models.PositiveSmallIntegerField(default=0)  # 0 - Локальный, 1 - Автоматический
-    time = models.DateTimeField(auto_now_add=True)
+# class WorkMode(models.Model):
+#     mode = models.PositiveSmallIntegerField(default=0)  # 0 - Локальный, 1 - Автоматический
+#     time = models.DateTimeField(auto_now_add=True)
 
 class LabValue(models.Model):
     bbo_id = models.ForeignKey(to=BBO, related_name='lab_id', on_delete=models.CASCADE, editable=True, default="")
     doseFromWeight = models.FloatField()
     doseFromVolume = models.FloatField()
     ashPercent = models.FloatField()
-    concentrationExcessActive = models.FloatField()
     suspendSubstSourceWater = models.FloatField()
     suspendSubstAfterSettling = models.FloatField()
     suspendSubstInPurified = models.FloatField()
-    bpkInputOS = models.FloatField()
+    concentrationExcessActive = models.FloatField()
     xpkInputAero = models.FloatField()
-    bpkInputAero = models.FloatField()
-    bpkOutputAero = models.FloatField()
-    nitrogenAmmoniumInputAero = models.FloatField()
-    nitrogenAmmoniumOutputAero = models.FloatField()
-    nitrogenNitriteInputAero = models.FloatField()
-    nitrogenNitriteOutputAero = models.FloatField()
-    nitrogenNitrateInputAero = models.FloatField()
-    nitrogenNitrateOutputAero = models.FloatField()
+    bpkInputOS = models.FloatField()
+    bpkInputBbo = models.FloatField()
+    bpkOutputBbo = models.FloatField()
+    nitrogenAmmoniumInputBbo = models.FloatField()
+    nitrogenAmmoniumOutputBbo = models.FloatField()
+    nitrogenNitriteInputBbo = models.FloatField()
+    nitrogenNitriteOutputBbo = models.FloatField()
+    nitrogenNitrateInputBbo = models.FloatField()
+    nitrogenNitrateOutputBbo = models.FloatField()
     totalNitrogenInputBO = models.FloatField()
-    organicNitrogenOutputAero = models.FloatField()
+    organicNitrogenOutputBbo = models.FloatField()
     totalPhosphorusOutput = models.FloatField()
     totalPhosphorusOutputBO = models.FloatField()
+    phSludge = models.FloatField()
+    sludgeTemperature = models.FloatField()
+    oxygenModeNitrificationZone = models.FloatField()
+    datetime = models.DateTimeField(null=True)
     modified_time = models.DateTimeField(auto_now=True)
     modified_by = models.ForeignKey(to=User, on_delete=models.CASCADE, editable=True)
 
@@ -121,75 +119,75 @@ class ProjValue(models.Model):
     def __str__(self) -> str:
         return f'{self.bbo_id}'
 
-
-class ParameterFromAnalogSensorForBBO(models.Model):
-    bbo_id = models.ForeignKey(to=BBO, related_name='parameter_analog_id', on_delete=models.CASCADE, editable=True,
-                               default="")
-    name = models.CharField(max_length=255, null=False)
-    value = models.FloatField()
-    is_main = models.BooleanField(default=False)
-    is_masked = models.BooleanField(default=False)
-    is_ready = models.BooleanField(default=False)
-    is_accident = models.BooleanField(default=False)  # Авария - показания датчика неккоректны
-    time = models.DateTimeField(auto_now_add=True)
-    rus_name = models.CharField(max_length=255, null=True)
-
-    def __str__(self) -> str:
-        return f'{self.name}'
-
-
-# Положение затвора - текущая концентрация кислорода
-class ManagementConcentrationFlowForBBO(models.Model):
-    bbo_id = models.ForeignKey(to=BBO, related_name='air_concentration_management_id', on_delete=models.CASCADE,
-                               editable=True,
-                               default="")
-    name = models.CharField(max_length=255, null=False)
-    current_value = models.FloatField()
-    given_value = models.FloatField()
-    deviation_rate = models.FloatField()
-    bbo_rate = models.FloatField()
-    is_not_accident = models.BooleanField(default=True)
-    timeout = models.FloatField()
-    time = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self) -> str:
-        return f'{self.name}'
-
-
-# Требуемый объем подачи воздуха воздуходувкой
-class ManagementVolumeFlowForBBO(models.Model):
-    bbo_id = models.ForeignKey(to=BBO, related_name='air_volume_management_id', on_delete=models.CASCADE, editable=True,
-                               default="")
-    avg_oxygen_rate = models.FloatField()  # записывать значения во вьюхе (где его брать???) при получение создавать?
-    min_avg_oxygen = models.FloatField()
-    max_avg_oxygen = models.FloatField()
-    given_workflow_for_blower = models.FloatField()
-    step_for_setup_blower = models.FloatField()
-    freq_for_setup_blower = models.FloatField()
-    air_consumption = models.FloatField()
-    current_pressure = models.FloatField()
-    timeout = models.FloatField()
-    time = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self) -> str:
-        return f'{self.name}'
-
-
-class CommandForBBO(models.Model):
-    bbo_id = models.ForeignKey(to=BBO, related_name='air_command_id', on_delete=models.CASCADE, editable=True,
-                               default="")
-    name = models.CharField(max_length=255, null=False)  # Название нужной комманды
-    command = models.IntegerField(
-        validators=[MinValueValidator(-1), MaxValueValidator(1)]
-    )  # -1 - понижать, 0 - ничего, 1 - повышать.
-    time = models.DateTimeField(auto_now_add=True)
-
-
-class Notification(models.Model):
-    bbo_id = models.ForeignKey(to=BBO, related_name='notification_id', on_delete=models.CASCADE, editable=True,
-                               default="")
-    status_code = models.IntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(2)])  # 0 - info, 1 - crit, 2 - accident.
-    title = models.CharField(max_length=255, blank=True)
-    message = models.CharField(max_length=255, blank=True)
-    created_date = models.DateTimeField(auto_now_add=True)
+#
+# class ParameterFromAnalogSensorForBBO(models.Model):
+#     bbo_id = models.ForeignKey(to=BBO, related_name='parameter_analog_id', on_delete=models.CASCADE, editable=True,
+#                                default="")
+#     name = models.CharField(max_length=255, null=False)
+#     value = models.FloatField()
+#     is_main = models.BooleanField(default=False)
+#     is_masked = models.BooleanField(default=False)
+#     is_ready = models.BooleanField(default=False)
+#     is_accident = models.BooleanField(default=False)  # Авария - показания датчика неккоректны
+#     time = models.DateTimeField(auto_now_add=True)
+#     rus_name = models.CharField(max_length=255, null=True)
+#
+#     def __str__(self) -> str:
+#         return f'{self.name}'
+#
+#
+# # Положение затвора - текущая концентрация кислорода
+# class ManagementConcentrationFlowForBBO(models.Model):
+#     bbo_id = models.ForeignKey(to=BBO, related_name='air_concentration_management_id', on_delete=models.CASCADE,
+#                                editable=True,
+#                                default="")
+#     name = models.CharField(max_length=255, null=False)
+#     current_value = models.FloatField()
+#     given_value = models.FloatField()
+#     deviation_rate = models.FloatField()
+#     bbo_rate = models.FloatField()
+#     is_not_accident = models.BooleanField(default=True)
+#     timeout = models.FloatField()
+#     time = models.DateTimeField(auto_now_add=True)
+#
+#     def __str__(self) -> str:
+#         return f'{self.name}'
+#
+#
+# # Требуемый объем подачи воздуха воздуходувкой
+# class ManagementVolumeFlowForBBO(models.Model):
+#     bbo_id = models.ForeignKey(to=BBO, related_name='air_volume_management_id', on_delete=models.CASCADE, editable=True,
+#                                default="")
+#     avg_oxygen_rate = models.FloatField()  # записывать значения во вьюхе (где его брать???) при получение создавать?
+#     min_avg_oxygen = models.FloatField()
+#     max_avg_oxygen = models.FloatField()
+#     given_workflow_for_blower = models.FloatField()
+#     step_for_setup_blower = models.FloatField()
+#     freq_for_setup_blower = models.FloatField()
+#     air_consumption = models.FloatField()
+#     current_pressure = models.FloatField()
+#     timeout = models.FloatField()
+#     time = models.DateTimeField(auto_now_add=True)
+#
+#     def __str__(self) -> str:
+#         return f'{self.name}'
+#
+#
+# class CommandForBBO(models.Model):
+#     bbo_id = models.ForeignKey(to=BBO, related_name='air_command_id', on_delete=models.CASCADE, editable=True,
+#                                default="")
+#     name = models.CharField(max_length=255, null=False)  # Название нужной комманды
+#     command = models.IntegerField(
+#         validators=[MinValueValidator(-1), MaxValueValidator(1)]
+#     )  # -1 - понижать, 0 - ничего, 1 - повышать.
+#     time = models.DateTimeField(auto_now_add=True)
+#
+#
+# class Notification(models.Model):
+#     bbo_id = models.ForeignKey(to=BBO, related_name='notification_id', on_delete=models.CASCADE, editable=True,
+#                                default="")
+#     status_code = models.IntegerField(
+#         validators=[MinValueValidator(0), MaxValueValidator(2)])  # 0 - info, 1 - crit, 2 - accident.
+#     title = models.CharField(max_length=255, blank=True)
+#     message = models.CharField(max_length=255, blank=True)
+#     created_date = models.DateTimeField(auto_now_add=True)
