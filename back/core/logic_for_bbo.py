@@ -23,15 +23,86 @@ from rest_framework.response import Response
 
 from .models import LabValue, ProjValue
 from .serializers import (labValueSerializer, projValueSerializer)
+
+
 # ParameterFromAnalogSensorForBBOSerializer,
 #                           BBOSerializer, ManagementConcentrationFlowForBBOSerializer, CommandForBBOSerializer,
 #                           NotificationSerializer)
 
 
+class GetDatesForLabValue(GenericAPIView):
+    serializer_class = labValueSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        date = []
+        objs = LabValue.objects.all()
+        i = 0
+        for obj in objs:
+            date.insert(i, obj.datetime.date())
+            i = i + 1
+        # print(date)
+        out = list(dict.fromkeys(date))
+        # print(out)
+        return JsonResponse(out, status=status.HTTP_200_OK, safe=False)
+
+
+class GetLabValueFromDates(GenericAPIView):
+    serializer_class = labValueSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        lab = []
+        labb = {}
+        search_date = request.GET.get('search_date')
+        objs = LabValue.objects.filter(datetime__date=search_date)
+        i = 0
+        for obj in objs:
+            lab.insert(i, obj.id)
+
+            labb[obj.id] = obj.modified_time
+            i = i + 1
+        serializer = self.serializer_class(objs, many=True)
+        # print(labb)
+        return JsonResponse(labb, status=status.HTTP_200_OK, safe=False)
+
+
+class GetLabValueFromID(GenericAPIView):
+    serializer_class = labValueSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        lab = []
+        lab_id = request.GET.get('id')
+        objs = LabValue.objects.filter(id=lab_id)
+        print(lab)
+        serializer = self.serializer_class(objs, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class UpdateLabValueByID(GenericAPIView):
+    serializer_class = labValueSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def put(self, request, lab_id):
+        # lab_id = request.PUT.get('id')
+        try:
+            lab_val = LabValue.objects.get(pk=lab_id)
+            print(lab_val)
+        except labValueSerializer.DoesNotExist:
+            return JsonResponse({'message': 'The lab_val does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        new_data = JSONParser().parse(request)
+        print(new_data)
+        tutorial_serializer = labValueSerializer(lab_val, data=new_data)
+        if tutorial_serializer.is_valid():
+            tutorial_serializer.save()
+            return JsonResponse(tutorial_serializer.data)
+        return JsonResponse(tutorial_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class PostLabValueView(GenericAPIView):
     serializer_class = labValueSerializer
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
 
     # def get_all_values(self):
     #     serializers = {}
@@ -58,14 +129,6 @@ class PostLabValueView(GenericAPIView):
     #     return response
 
     def post(self, request):
-        # bbo1 = request.data['bbo1']
-        # bbo2 = request.data['bbo2']
-        # bbo3 = request.data['bbo3']
-        # bbo4 = request.data['bbo4']
-        # bbo5 = request.data['bbo5']
-        # bbo6 = request.data['bbo6']
-        # bbo7 = request.data['bbo7']
-        # bbo8 = request.data['bbo8']
         if request.data['datetime']:
             datetime_lab = request.data['datetime']
         else:
@@ -73,16 +136,15 @@ class PostLabValueView(GenericAPIView):
         del request.data['datetime']
         for i in range(len(request.data)):
             # print(request.data[f'bbo{i+1}'])
-            request.data[f'bbo{i+1}']['bbo_id'] = i+1
-            request.data[f'bbo{i+1}']['datetime'] = datetime_lab
+            request.data[f'bbo{i + 1}']['bbo_id'] = i + 1
+            request.data[f'bbo{i + 1}']['datetime'] = datetime_lab
 
-            serializer = self.serializer_class(data=request.data[f'bbo{i+1}'])
+            serializer = self.serializer_class(data=request.data[f'bbo{i + 1}'])
             valid = serializer.is_valid(raise_exception=True)
 
             if valid:
                 status_code = status.HTTP_200_OK
                 serializer.save()
-
 
         values1 = LabValue.objects.all().filter(bbo_id=1).last()
         values2 = LabValue.objects.all().filter(bbo_id=2).last()
@@ -128,7 +190,7 @@ class PostLabValueView(GenericAPIView):
 
 class GetLabValueView(GenericAPIView):
     serializer_class = labValueSerializer
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         bbo_id = request.data.get("bbo_id")
@@ -253,7 +315,7 @@ class GetAllBBOProjValueView(GenericAPIView):
 
 class GetAllBBOLabValueView(GenericAPIView):
     serializer_class = labValueSerializer
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         values1 = LabValue.objects.all().filter(bbo_id=1).last()

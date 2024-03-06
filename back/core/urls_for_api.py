@@ -11,7 +11,7 @@ from .logic_for_bbo import (
     PostProjValueView,
     GetProjValueView,
     GetAllBBOProjValueView,
-    GetAllBBOLabValueView,
+    GetAllBBOLabValueView, GetDatesForLabValue, GetLabValueFromDates, GetLabValueFromID, UpdateLabValueByID,
     # ParameterFromAnalogSensorForBBOView, AllParameterFromAnalogSensorForBBO1View,
     # AirManagerView, CommandForBBOView, stat_detail
 )
@@ -25,6 +25,10 @@ urlpatterns = [
     path('post_proj_value', PostProjValueView.as_view()),
     path('get_all_proj_value', GetAllBBOProjValueView.as_view()),
     path('get_all_lab_value', GetAllBBOLabValueView.as_view()),
+    path('get_dates', GetDatesForLabValue.as_view()),
+    re_path(r'get_lab_from_dates', GetLabValueFromDates.as_view()),
+    re_path(r'get_lab_from_id', GetLabValueFromID.as_view()),
+    re_path(r'^update_lab_val/(?P<lab_id>[0-9]+)$', UpdateLabValueByID.as_view()),
     # path('post_analog_parameter', ParameterFromAnalogSensorForBBOView.as_view()),
     # path('get_manager_air_flow', AirManagerView.as_view()),
     # path('post_manager_air_flow', AirManagerView.as_view()),
